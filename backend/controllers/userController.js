@@ -1,4 +1,3 @@
-
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
@@ -8,25 +7,36 @@ const generateToken = (id) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, username } = req.body;
 
-  if (!name || !email || !password) {
+  // Validar campos requeridos
+  if (!name || !email || !password || !username) {
     res.status(400);
     throw new Error('Por favor completa todos los campos');
   }
 
+  // Verificar si el email ya está registrado
   const userExists = await User.findOne({ email });
   if (userExists) {
     res.status(400);
     throw new Error('El usuario ya existe');
   }
 
-  const user = await User.create({ name, email, password });
+  // Verificar si el nombre de usuario ya está en uso
+  const usernameExists = await User.findOne({ username });
+  if (usernameExists) {
+    res.status(400);
+    throw new Error('El nombre de usuario ya está en uso');
+  }
+
+  // Crear nuevo usuario
+  const user = await User.create({ name, email, password, username });
   if (user) {
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
+      username: user.username,
       token: generateToken(user._id),
     });
   } else {
@@ -49,6 +59,7 @@ const loginUser = asyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      username: user.username, // Incluye username si es necesario
       token: generateToken(user._id),
     });
   } else {
