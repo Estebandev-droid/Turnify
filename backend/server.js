@@ -1,36 +1,30 @@
+
 const express = require('express');
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const userRoutes = require('./routes/userRoutes'); // Importar rutas de usuario
+const connectDB = require('./config/db');
+const userRoutes = require('./routes/userRoutes');
+const { errorHandler } = require('./middleware/errorMiddleware');
 
-// Configuración inicial
 dotenv.config();
+connectDB();
 const app = express();
 
-// Middleware CORS con configuración específica
 app.use(cors({
-  origin: 'http://localhost:5173', // Permitir solicitudes desde el frontend
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
-  credentials: true, // Permitir cookies si es necesario
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
 }));
-
+app.options('*', cors());
 app.use(express.json());
 
-// Conexión a MongoDB
-mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB conectado'))
-  .catch((err) => console.error('Error conectando a MongoDB:', err));
+app.use('/api/users', userRoutes);
 
-// Rutas iniciales
 app.get('/', (req, res) => {
   res.send('Turnify Backend en funcionamiento');
 });
 
-// Rutas de API
-app.use('/api/users', userRoutes); // Usar las rutas de usuario
+app.use(errorHandler);
 
-// Puerto
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Servidor ejecutándose en puerto ${PORT}`));

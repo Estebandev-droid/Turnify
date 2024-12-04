@@ -1,15 +1,8 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AuthFlow from './pages/AuthFlow';
 
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<AuthFlow />} />
-      </Routes>
-    </Router>
-  );
-}
+import React from 'react';
+
+const App = () => {
+  return <div className="text-center text-2xl">Turnify Frontend</div>;
+};
 
 export default App;
