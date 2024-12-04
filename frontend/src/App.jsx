@@ -1,10 +1,14 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AuthFlow from './pages/AuthFlow';
 
 function App() {
   return (
-    <div className="h-screen flex justify-center items-center bg-gray-100">
-      <h1 className="text-4xl font-bold text-indigo-600">¡Bienvenido a Turnify!</h1>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<AuthFlow />} />
+      </Routes>
+    </Router>
   );
 }
 

@@ -2,11 +2,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const userRoutes = require('./routes/userRoutes'); // Importar rutas de usuario
 
 // Configuración inicial
 dotenv.config();
 const app = express();
-app.use(cors());
+
+// Middleware CORS con configuración específica
+app.use(cors({
+  origin: 'http://localhost:5173', // Permitir solicitudes desde el frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos HTTP permitidos
+  credentials: true, // Permitir cookies si es necesario
+}));
+
 app.use(express.json());
 
 // Conexión a MongoDB
@@ -19,6 +27,9 @@ mongoose
 app.get('/', (req, res) => {
   res.send('Turnify Backend en funcionamiento');
 });
+
+// Rutas de API
+app.use('/api/users', userRoutes); // Usar las rutas de usuario
 
 // Puerto
 const PORT = process.env.PORT || 5000;
